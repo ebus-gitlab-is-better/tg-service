@@ -1,7 +1,7 @@
 syntax = "proto3";
 package kratos.api;
 
-option go_package = "tgbot-service/internal/conf;conf";
+option go_package = "user-service/internal/conf;conf";
 
 import "google/protobuf/duration.proto";
 
@@ -27,8 +27,11 @@ message Server {
 
 message Data {
   message Database {
-    string driver = 1;
-    string source = 2;
+    string host = 1;
+    string user = 2;
+    string password = 3;
+    string database = 4;
+    string port = 5;
   }
   message Redis {
     string network = 1;
@@ -38,4 +41,5 @@ message Data {
   }
   Database database = 1;
   Redis redis = 2;
+  string api_key = 3;
 }
