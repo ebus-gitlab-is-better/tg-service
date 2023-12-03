@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"tgbot-service/internal/biz"
 	"tgbot-service/pkg/telebot"
 
@@ -15,7 +14,7 @@ func NewTelebot(uc *biz.UserUseCase, bot *tele.Bot) *telebot.Bot {
 		uc.Create(context.TODO(), &biz.User{
 			ChatID: c.Chat().ID,
 		})
-		fmt.Println("Вы подписались на уведомления")
+		c.Send("Вы подписались на уведомления")
 		return nil
 	})
 	return telebot.NewBot(bot)
