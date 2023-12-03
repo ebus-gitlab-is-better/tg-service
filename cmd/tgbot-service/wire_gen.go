@@ -7,30 +7,33 @@
 package main
 
 import (
+	"github.com/go-kratos/kratos/v2"
+	"github.com/go-kratos/kratos/v2/log"
 	"tgbot-service/internal/biz"
 	"tgbot-service/internal/conf"
 	"tgbot-service/internal/data"
 	"tgbot-service/internal/server"
-	"tgbot-service/internal/service"
+)
 
-	"github.com/go-kratos/kratos/v2"
-	"github.com/go-kratos/kratos/v2/log"
+import (
+	_ "go.uber.org/automaxprocs"
 )
 
 // Injectors from wire.go:
 
 // wireApp init kratos application.
 func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
-	dataData, cleanup, err := data.NewData(confData, logger)
+	grpcServer := server.NewGRPCServer(confServer, logger)
+	db := data.NewDB(confData)
+	dataData, cleanup, err := data.NewData(confData, logger, db)
 	if err != nil {
 		return nil, nil, err
 	}
-	greeterRepo := data.NewGreeterRepo(dataData, logger)
-	greeterUsecase := biz.NewGreeterUsecase(greeterRepo, logger)
-	greeterService := service.NewGreeterService(greeterUsecase)
-	grpcServer := server.NewGRPCServer(confServer, greeterService, logger)
-	httpServer := server.NewHTTPServer(confServer, greeterService, logger)
-	app := newApp(logger, grpcServer, httpServer)
+	userRepo := data.NewUserRepo(dataData)
+	userUseCase := biz.NewUserUseCase(userRepo, logger)
+	bot := data.NewTelebot(confData)
+	telebotBot := server.NewTelebot(userUseCase, bot)
+	app := newApp(logger, grpcServer, telebotBot)
 	return app, func() {
 		cleanup()
 	}, nil

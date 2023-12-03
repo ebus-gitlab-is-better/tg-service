@@ -12,13 +12,14 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
+	tele "gopkg.in/telebot.v3"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewDB)
+var ProviderSet = wire.NewSet(NewData, NewDB, NewUserRepo, NewTelebot)
 
 // Data структура для работы с базой данных
 type Data struct {
@@ -81,5 +82,19 @@ func NewDB(c *conf.Data) *gorm.DB {
 		log.Errorf("failed opening connection to postgres: %v", err)
 		panic("failed to connect database")
 	}
+	db.AutoMigrate(&User{})
 	return db
+}
+
+func NewTelebot(c *conf.Data) *tele.Bot {
+	pref := tele.Settings{
+		Token:  c.ApiKey,
+		Poller: &tele.LongPoller{Timeout: 10 * time.Second},
+	}
+	b, err := tele.NewBot(pref)
+	if err != nil {
+		log.Fatal(err)
+		return nil
+	}
+	return b
 }
