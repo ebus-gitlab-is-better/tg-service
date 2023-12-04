@@ -26,10 +26,11 @@ type UserUseCase struct {
 	logger *log.Helper
 }
 
-func NewUserUseCase(repo UserRepo, logger log.Logger) *UserUseCase {
+func NewUserUseCase(repo UserRepo, logger log.Logger, bot *tele.Bot) *UserUseCase {
 	return &UserUseCase{
 		repo:   repo,
 		logger: log.NewHelper(logger),
+		bot:    bot,
 	}
 }
 

@@ -30,8 +30,8 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 		return nil, nil, err
 	}
 	userRepo := data.NewUserRepo(dataData)
-	userUseCase := biz.NewUserUseCase(userRepo, logger)
 	bot := data.NewTelebot(confData)
+	userUseCase := biz.NewUserUseCase(userRepo, logger, bot)
 	telebotBot := server.NewTelebot(userUseCase, bot)
 	rabbitConn := server.NewRabbitConn(confData, userUseCase)
 	app := newApp(logger, grpcServer, telebotBot, rabbitConn)
