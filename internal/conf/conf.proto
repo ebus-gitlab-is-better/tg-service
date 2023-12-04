@@ -42,4 +42,5 @@ message Data {
   Database database = 1;
   Redis redis = 2;
   string api_key = 3;
+  string rabbit = 4;
 }

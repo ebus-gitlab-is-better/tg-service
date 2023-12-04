@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"tgbot-service/internal/conf"
+	"tgbot-service/pkg/rabbit"
 	"tgbot-service/pkg/telebot"
 
 	"github.com/go-kratos/kratos/v2"
@@ -34,7 +35,7 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, gs *grpc.Server, bot *telebot.Bot) *kratos.App {
+func newApp(logger log.Logger, gs *grpc.Server, bot *telebot.Bot, rabbit *rabbit.RabbitConn) *kratos.App {
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -44,6 +45,7 @@ func newApp(logger log.Logger, gs *grpc.Server, bot *telebot.Bot) *kratos.App {
 		kratos.Server(
 			gs,
 			bot,
+			rabbit,
 		),
 	)
 }

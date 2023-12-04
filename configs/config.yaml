@@ -18,3 +18,4 @@ data:
     client_secret: "${KC_SECRET}"
     realm: ${KC_REALM}
   api_key: ${API_KEY}
+  rabbit: ${RABBIT}
