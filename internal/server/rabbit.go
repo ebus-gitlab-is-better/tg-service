@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"tgbot-service/internal/biz"
 	"tgbot-service/internal/conf"
@@ -49,6 +50,7 @@ func NewRabbitConn(c *conf.Data, uc *biz.UserUseCase) *rabbit.RabbitConn {
 		for d := range msgs {
 			var message MessageDTO
 			err := json.Unmarshal(d.Body, &message)
+			fmt.Println(err)
 			if err == nil {
 				uc.SendAll(context.TODO(), message.Message)
 			}
