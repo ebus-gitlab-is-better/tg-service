@@ -11,10 +11,14 @@ import (
 func NewTelebot(uc *biz.UserUseCase, bot *tele.Bot) *telebot.Bot {
 	//TODO выбор маршрута
 	bot.Handle("/start", func(c tele.Context) error {
-		uc.Create(context.TODO(), &biz.User{
+		err := uc.Create(context.TODO(), &biz.User{
 			ChatID: c.Chat().ID,
 		})
-		c.Send("Вы подписались на уведомления")
+		if err != nil {
+			c.Send("Вы уже подписаны")
+		} else {
+			c.Send("Вы подписались на уведомления")
+		}
 		return nil
 	})
 	return telebot.NewBot(bot)
